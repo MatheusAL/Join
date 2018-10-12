@@ -18,9 +18,6 @@ void leLista(int *l,int size,char *x){
 int main(int argc, char *argv[]){
     int m,j;
     char *x;
-    ifstream file1;
-    ifstream file2;
-    ofstream file3;
     m=atoi(argv[1]);
     x=argv[2];
     int size=strlen(x);

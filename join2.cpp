@@ -13,6 +13,7 @@ using namespace std;
 struct dados{
     char **matriz;
 
+
 };
 
 void leLista(int *l,int size,char *x){
@@ -25,6 +26,13 @@ void leLista(int *l,int size,char *x){
     }
 
 }
+int compara(const void *a, const void *b) {
+    
+    int x=(strcmp((*(struct dados*)a).matriz[0], (*(struct dados *) b).matriz[0]));
+    
+    return x;
+}
+
 /*
 void merge(char *nome,int qtdfiles,int K){
     char novo[20];
@@ -44,9 +52,9 @@ void merge(char *nome,int qtdfiles,int K){
     while(procuraMenor)
 }
 */
-void salva(char *nome, dados *p, int tam,int coluna){ //funçao para salvar no arquivo
+void salva(char **nome,int namefile,dados *p, int tam,int coluna){ //funçao para salvar no arquivo
     ofstream file1;
-    file1.open(nome);
+    file1.open(nome[namefile]);
     for(int cont=0;cont<tam;cont++){
         for(int cont2=0;cont2<coluna;cont2++){
             if(cont2==coluna-1){
@@ -67,10 +75,18 @@ int Ordena(char *nome,int m){
     int cont=0,j=0,i=0;
     int coluna=0;
     char c,*findcol;
+    //Vetor para guardar os nomes dos arquivos, depois isso vai ser feito na funçao mergesortexterno
+    char **temp=new char*[1000];//ex
+    for(int cont=0;cont<1000;cont++){
+        temp[cont]=new char[10];
+    }
+    ////////////////////////////
+
+
     ifstream file;
     file.open(nome);
     dados *p=new dados[m];
-    char *auxiliar=new char[1000000];
+    char *auxiliar=new char[1000000];//alocaçao de tamanho desnecessario para ler a linha
     //ACHA AQUANTIDADE DE COLUNAS
     file.getline(auxiliar,10000,'\n');
     findcol=strtok(auxiliar,"\t");
@@ -105,29 +121,35 @@ int Ordena(char *nome,int m){
             }    
         }
         if(i==m){ //quando sao lidas m linhas salva o arquivo
-            cont++;
-            //qsort(matriz,m,sizeof(char),compara);
-            char temp[5];
-            for(int cont=0;cont<5;cont++){
-                temp[cont]= 97 + rand() % 26;;
+            qsort(p,m,sizeof(dados),compara);
+            for(int namefile=0;namefile<10;namefile++){
+                temp[cont][namefile]= 97 + rand() % 26;;
             }
-            salva(temp,p,m,coluna);
+            salva(temp,cont,p,m,coluna);
             i=0;
+            cont++;
         }
     }
     if(i>0){ // se sobrarem linhas
-        cont++;
-        //qsort(matriz,i,sizeof(char),compara);
-        char temp[5];
-        for(int cont=0;cont<5;cont++){
-            temp[cont]= 97 + rand() % 26;;
+        qsort(p,i,sizeof(dados),compara);
+        for(int namefile=0;namefile<10;namefile++){
+            temp[cont][namefile]= 97 + rand() % 26;;
         }
-        salva(temp,p,i,coluna);
+        salva(temp,cont,p,i,coluna);
+        cont++;
     }
     file.close();
+    //desaloca tamanho desnecessario
+    for(int i=1000;i>cont;i--){
+        delete[] temp[i];
+    }
+    //delete []temp;
+
     //desaloca matriz
     for(int cont=0;cont<m;cont++){
-        delete[] p[cont].matriz;
+        for(int cont2=0;cont2<coluna;cont2++){
+            delete[] p[cont].matriz[cont2];
+        }
     }
     delete []auxiliar;
     return cont; // futuramente o numero de arquivos criados
@@ -135,7 +157,7 @@ int Ordena(char *nome,int m){
 
 /*void MergeSortExterno(char *nome,int m){ //funçao futura
     int qtdfiles;
-    char novo[20];
+    //alocaçao dos nomes dos vetores devera ser feita aqui
     qtdfiles=Ordena(nome,m);
     int cont;
     int K = m/(qtdfiles+1);

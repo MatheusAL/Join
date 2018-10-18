@@ -66,19 +66,17 @@ int Ordena(char *nome,int m){
     srand (time(NULL));
     int cont=0,j=0,i=0;
     int coluna=0;
-    char c;
+    char c,*findcol;
     ifstream file;
     file.open(nome);
     dados *p=new dados[m];
     char *auxiliar=new char[1000000];
     //ACHA AQUANTIDADE DE COLUNAS
-    while(true){
-        c=file.get();
-        if(c=='\n')
-            break;
-        if(c!='\t' && c!='\n'){
-            coluna++;
-        }    
+    file.getline(auxiliar,10000,'\n');
+    findcol=strtok(auxiliar,"\t");
+    while(findcol){
+        coluna++;
+        findcol=strtok(NULL,"\t");
     }
     //alocaçao das colunas
     for(int cont=0;cont<m;cont++){
@@ -97,17 +95,16 @@ int Ordena(char *nome,int m){
         while(s){
             int size=strlen(s);
             p[i].matriz[j]=new char[size];
-            p[i].matriz[j]=s;
-            cout<<p[i].matriz[j]<<'\t';
+            strcpy((p[i].matriz[j]),s);
+            //cout<<p[i].matriz[j]<<'\t';
             j++;
             s=strtok(NULL,"\t");
             if(j==coluna){
                 j=0;
+                i++;
             }    
         }
-        i++;
-        cout<<'\n';
-        if(i==m){ ////quando sao lidas m linhas salva o arquivo
+        if(i==m){ //quando sao lidas m linhas salva o arquivo
             cont++;
             //qsort(matriz,m,sizeof(char),compara);
             char temp[5];
@@ -115,7 +112,6 @@ int Ordena(char *nome,int m){
                 temp[cont]= 97 + rand() % 26;;
             }
             salva(temp,p,m,coluna);
-            cout<<endl;
             i=0;
         }
     }

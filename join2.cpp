@@ -143,14 +143,15 @@ int Ordena(char *nome,int m){
     for(int i=1000;i>cont;i--){
         delete[] temp[i];
     }
-    //delete []temp;
-
+    delete []temp;
     //desaloca matriz
     for(int cont=0;cont<m;cont++){
         for(int cont2=0;cont2<coluna;cont2++){
             delete[] p[cont].matriz[cont2];
         }
+        delete [] p[cont].matriz;
     }
+    delete []p;
     delete []auxiliar;
     return cont; // futuramente o numero de arquivos criados
 }
@@ -170,7 +171,6 @@ int Ordena(char *nome,int m){
 
 }
 */
-
 int main(int argc, char *argv[]){
     int m,j;
     char *x;
@@ -186,6 +186,7 @@ int main(int argc, char *argv[]){
     leLista(L2,size,x);
     //Término
     Ordena(argv[4],m);
+    //Ordena(argv[5],m);
     delete []L1;
     delete []L2;
     

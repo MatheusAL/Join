@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
-#include <cstring>
+#include <string.h>
 #include <stdlib.h>
 using namespace std;
 
@@ -76,8 +76,8 @@ int Ordena(char *nome,int m){
     int coluna=0;
     char c,*findcol;
     //Vetor para guardar os nomes dos arquivos, depois isso vai ser feito na funçao mergesortexterno
-    char **temp=new char*[1000];//ex
-    for(int cont=0;cont<1000;cont++){
+    char **temp=new char*[100];//ex
+    for(int cont=0;cont<100;cont++){
         temp[cont]=new char[10];
     }
     ////////////////////////////
@@ -110,7 +110,7 @@ int Ordena(char *nome,int m){
         s=strtok(auxiliar,"\t");
         while(s){
             int size=strlen(s);
-            p[i].matriz[j]=new char[size];
+            p[i].matriz[j]=new char[size+1];
             strcpy((p[i].matriz[j]),s);
             //cout<<p[i].matriz[j]<<'\t';
             j++;
@@ -140,7 +140,7 @@ int Ordena(char *nome,int m){
     }
     file.close();
     //desaloca tamanho desnecessario
-    for(int i=1000;i>cont;i--){
+    for(int i=100;i>cont;i--){
         delete[] temp[i];
     }
     delete []temp;
@@ -186,7 +186,6 @@ int main(int argc, char *argv[]){
     leLista(L2,size,x);
     //Término
     Ordena(argv[4],m);
-    //Ordena(argv[5],m);
     delete []L1;
     delete []L2;
     

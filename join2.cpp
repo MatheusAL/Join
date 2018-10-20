@@ -78,10 +78,17 @@ int Ordena(char *nome,int m){
     //Vetor para guardar os nomes dos arquivos, depois isso vai ser feito na funçao mergesortexterno
     char **temp=new char*[100];//ex
     for(int cont=0;cont<100;cont++){
-        temp[cont]=new char[10];
+        temp[cont]=new char[11];
     }
-    ////////////////////////////
-
+    for(int cont=0;cont<100;cont++){
+        for(int namefile=0;namefile<11;namefile++){
+            if(namefile==10)
+                temp[cont][namefile]='\0';
+            else
+                temp[cont][namefile]= 97 + rand() % 26;;
+        }
+    }
+    /////////NOMES DEFINIDOS//////////////
 
     ifstream file;
     file.open(nome);
@@ -106,10 +113,11 @@ int Ordena(char *nome,int m){
     file.open(nome);
     while(!file.eof()){
         char *s;
+        int size=0;;
         file.getline(auxiliar,10000,'\n');
         s=strtok(auxiliar,"\t");
         while(s){
-            int size=strlen(s);
+            size=strlen(s);
             p[i].matriz[j]=new char[size+1];
             strcpy((p[i].matriz[j]),s);
             //cout<<p[i].matriz[j]<<'\t';
@@ -122,21 +130,19 @@ int Ordena(char *nome,int m){
         }
         if(i==m){ //quando sao lidas m linhas salva o arquivo
             qsort(p,m,sizeof(dados),compara);
-            for(int namefile=0;namefile<10;namefile++){
-                temp[cont][namefile]= 97 + rand() % 26;;
-            }
             salva(temp,cont,p,m,coluna);
             i=0;
             cont++;
         }
     }
     if(i>0){ // se sobrarem linhas
-        qsort(p,i,sizeof(dados),compara);
-        for(int namefile=0;namefile<10;namefile++){
-            temp[cont][namefile]= 97 + rand() % 26;;
-        }
-        salva(temp,cont,p,i,coluna);
         cont++;
+        qsort(p,i,sizeof(dados),compara);
+        /*for(int namefile=0;namefile<10;namefile++){
+            temp[cont][namefile]= 97 + rand() % 26;;
+        }*/
+        salva(temp,cont,p,i,coluna);
+        
     }
     file.close();
     //desaloca tamanho desnecessario
@@ -144,6 +150,10 @@ int Ordena(char *nome,int m){
         delete[] temp[i];
     }
     delete []temp;
+    /*for(int i=100;i>cont;i--){
+        free(temp[cont]);
+    }
+    free(temp);*/
     //desaloca matriz
     for(int cont=0;cont<m;cont++){
         for(int cont2=0;cont2<coluna;cont2++){

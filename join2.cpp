@@ -76,7 +76,8 @@ int Ordena(char *nome,int m){
     int coluna=0;
     char *findcol;
     //Vetor para guardar os nomes dos arquivos, depois isso vai ser feito na funçao mergesortexterno
-    char **temp=new char*[100];//ex
+    char **temp;
+    temp=new char*[100];//ex
     for(int cont=0;cont<100;cont++){
         temp[cont]=new char[11];
     }
@@ -126,7 +127,6 @@ int Ordena(char *nome,int m){
                 i++;
             }
         }
-        cout<<endl;
         if(i==m){ //quando sao lidas m linhas salva o arquivo
             qsort(p,m,sizeof(dados),compara);
             salva(temp,cont,p,m,coluna);
@@ -142,7 +142,7 @@ int Ordena(char *nome,int m){
     
     file.close();
     //desaloca tamanho desnecessario
-    for(int i=100;i>cont;i--){
+    for(int i=99;i>cont;i--){
         delete[] temp[i];
     }
     delete []temp;

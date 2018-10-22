@@ -74,7 +74,7 @@ int Ordena(char *nome,int m){
     srand (time(NULL));
     int cont=0,j=0,i=0;
     int coluna=0;
-    char c,*findcol;
+    char *findcol;
     //Vetor para guardar os nomes dos arquivos, depois isso vai ser feito na funçao mergesortexterno
     char **temp=new char*[100];//ex
     for(int cont=0;cont<100;cont++){
@@ -95,7 +95,7 @@ int Ordena(char *nome,int m){
     dados *p=new dados[m];
     char *auxiliar=new char[1000000];//alocaçao de tamanho desnecessario para ler a linha
     //ACHA AQUANTIDADE DE COLUNAS
-    file.getline(auxiliar,10000,'\n');
+    file.getline(auxiliar,1000000,'\n');
     findcol=strtok(auxiliar,"\t");
     while(findcol){
         coluna++;
@@ -108,7 +108,6 @@ int Ordena(char *nome,int m){
     file.close();// fecha aqui pra começar a leitura do 0.
     //fim alocacao colunas
 
-
     //////////Leitura dos dados
     file.open(nome);
     while(!file.eof()){
@@ -120,14 +119,14 @@ int Ordena(char *nome,int m){
             size=strlen(s);
             p[i].matriz[j]=new char[size+1];
             strcpy((p[i].matriz[j]),s);
-            //cout<<p[i].matriz[j]<<'\t';
             j++;
             s=strtok(NULL,"\t");
             if(j==coluna){
                 j=0;
                 i++;
-            }    
+            }
         }
+        cout<<endl;
         if(i==m){ //quando sao lidas m linhas salva o arquivo
             qsort(p,m,sizeof(dados),compara);
             salva(temp,cont,p,m,coluna);
@@ -138,22 +137,15 @@ int Ordena(char *nome,int m){
     if(i>0){ // se sobrarem linhas
         cont++;
         qsort(p,i,sizeof(dados),compara);
-        /*for(int namefile=0;namefile<10;namefile++){
-            temp[cont][namefile]= 97 + rand() % 26;;
-        }*/
-        salva(temp,cont,p,i,coluna);
-        
+        salva(temp,cont,p,i,coluna);  
     }
+    
     file.close();
     //desaloca tamanho desnecessario
     for(int i=100;i>cont;i--){
         delete[] temp[i];
     }
     delete []temp;
-    /*for(int i=100;i>cont;i--){
-        free(temp[cont]);
-    }
-    free(temp);*/
     //desaloca matriz
     for(int cont=0;cont<m;cont++){
         for(int cont2=0;cont2<coluna;cont2++){

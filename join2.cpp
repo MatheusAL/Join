@@ -132,25 +132,35 @@ int Ordena(char *nome,int m){
             salva(temp,cont,p,m,coluna);
             i=0;
             cont++;
+            for(int cont=0;cont<m;cont++){
+                for(int cont2=0;cont2<coluna;cont2++){
+                    delete[] p[cont].matriz[cont2];
+                }
+            }
         }
     }
     if(i>0){ // se sobrarem linhas
         cont++;
         qsort(p,i,sizeof(dados),compara);
-        salva(temp,cont,p,i,coluna);  
+        salva(temp,cont,p,i,coluna);
+        for(int cont=0;cont<i;cont++){
+            for(int cont2=0;cont2<coluna;cont2++){
+                delete[] p[cont].matriz[cont2];
+            }
+        }  
     }
     
     file.close();
     //desaloca tamanho desnecessario
-    for(int i=99;i>cont;i--){
+    for(int i=0;i<100;i++){
         delete[] temp[i];
     }
     delete []temp;
     //desaloca matriz
     for(int cont=0;cont<m;cont++){
-        for(int cont2=0;cont2<coluna;cont2++){
+        /*for(int cont2=0;cont2<coluna;cont2++){
             delete[] p[cont].matriz[cont2];
-        }
+        }*/
         delete [] p[cont].matriz;
     }
     delete []p;

@@ -5,11 +5,11 @@
 #include <stdlib.h>
 using namespace std;
 
-struct arquivo{
+/*struct arquivo{
     ifstream f;
     int posicao,tammax;
     char ***buffer;
-};
+};*/
 
 struct dados{
     char **matriz;
@@ -103,75 +103,64 @@ void mergeonly(dados *p, int m,int *L,int sizelista){
     else
         return 0;
 }*/
+void encontramenor(ifstream *arquivo,char ***vetorcompara,int qtdfiles,int *L){ //começo da funçao para encontrar o menor
+    int x,l=0,cont=0;
+        x=strcmp(vetorcompara[cont][L[l]],vetorcompara[cont+1][L[l]]); 
+}
 
 
-void carregaDados(arquivo *arquivo,int K,int coluna){
-    int i=0,j=0;
-    arquivo->posicao=0;
-    arquivo->tammax=0;
+void carregaDados(ifstream *arquivo,int linha,char ***vetorcompara,int coluna){
+    int j=0;
     char *auxiliar=new char[1000000];
-    for(int cont=0;cont<K;cont++){
-        arquivo->buffer[cont]=new char*[coluna];
-    }
-    for(int cont=0;cont<K;cont++){
-        if(!arquivo->f.eof()){
-            char *s;
-            int size=0;
-            arquivo->f.getline(auxiliar,10000,'\n');
-            s=strtok(auxiliar,"\t");
-            while(s){
-                size=strlen(s);
-                arquivo->buffer[i][j]=new char[size+1];
-                strcpy((arquivo->buffer[i][j]),s);
-                j++;
-                s=strtok(NULL,"\t");
-                if(j==coluna){
-                    j=0;
-                    i++;
-                }
-            }
-        }
-        else{
-            arquivo->f.close();
-            break;
+    char *s;
+    int size=0;
+    arquivo[linha].getline(auxiliar,10000,'\n');
+    s=strtok(auxiliar,"\t");
+    while(s){
+        size=strlen(s);
+        vetorcompara[linha][j]=new char[size+1];
+        strcpy((vetorcompara[linha][j]),s);
+        j++;
+        s=strtok(NULL,"\t");
+        if(j==coluna){
+            break;   
         }
     }
-
     delete [] auxiliar;
 }
 void mergeex(char *nome,int qtdfiles,int m,int *L,int sizelista,char **temp,int coluna){
-    //char novo[20];
-    dados *buffer= new dados[m];
-    arquivo *arq;
-    arq=(arquivo*) new arquivo[qtdfiles];
+    //criaçao do vetor que sera usado para encontrar o menor
+    char ***vetorcompara= new char**[qtdfiles];
     for(int cont=0;cont<qtdfiles;cont++){
-        arq[cont].f.open(temp[cont]);
-        arq[cont].tammax=0;
-        arq[cont].posicao=0;
-        arq[cont].buffer=new char**[m];
-        carregaDados(&arq[cont],m,coluna);
+        vetorcompara[cont]=new char*[coluna];
     }
-    int menor,qtdbuffer=0;
-    /*while(procuraMenor(arq,qtdfiles,m,&menor)==1){
-        buffer[qtdbuffer]=menor;
-        qtdbuffer++;
-        if(qtdbuffer==m){
-            salva(temp,buffer,qtdbuffer);
-            qtdbuffer=0;
+    ///////////////////
+    ifstream *arquivo=new ifstream[qtdfiles];//criaçao do vetor de ifstream contendo o nome de cada arquivo
+    for(int cont=0;cont<qtdfiles;cont++){
+        arquivo[cont].open(temp[cont]);
+        carregaDados(arquivo,cont,vetorcompara,coluna); //preenche uma linha do vetor
+    }
+    //escreve o conteudo atual do vetor (teste apenas)
+    for(int cont=0;cont<qtdfiles;cont++){
+        cout<<"arquivo: "<<cont<<endl;
+        for(int cont2=0;cont2<coluna;cont2++){
+            cout<<vetorcompara[cont][cont2]<<'\t';
         }
-    }*/
+        cout<<'\n';
+    }
+    /////////
+    
+    //encontramenor() aqui é chamada a funçao de encontrar o menor valor 
+
     //liberando a memoria dos arquivos, colunas e itens
     for(int cont=0;cont<qtdfiles;cont++){
-        for(int cont2=0;cont2<m;cont2++){
-            for(int cont3=0;cont3<coluna;cont3++){
-                delete [] arq[cont].buffer[cont2][cont3];
-            }
-            delete[] arq[cont].buffer[cont2];
+        for(int cont2=0;cont2<coluna;cont2++){
+            delete [] vetorcompara[cont][cont2];
         }
-        delete [] arq[cont].buffer;
+        delete []vetorcompara[cont];
     }
-    delete []arq;
-    delete []buffer;
+    delete []arquivo;
+    delete []vetorcompara;
 }
 
 void salva(char **nome,int namefile,dados *p, int tam,int coluna){ //funçao para salvar no arquivo
@@ -255,11 +244,6 @@ int Ordena(char *nome,int m,int *L,int sizelista,char **temp,int &coluna){
         }  
     }  
     file.close();
-    //desaloca tamanho desnecessario
-    /*for(int i=0;i<100;i++){
-        delete[] temp[i];
-    }
-    delete []temp;*/
     //desaloca matriz
     for(int cont=0;cont<m;cont++){
         /*for(int cont2=0;cont2<coluna;cont2++){
@@ -294,9 +278,7 @@ void MergeSortExterno(char *nome,int m,int *L,int sizelista){ //funçao futura
     //int K = m/(qtdfiles+1);
     //remove(nome);
     mergeex(nome,qtdfiles,m,L,sizelista,temp,coluna);
-    /*for(cont=0;cont<qtdfiles;cont++){ //desalocaçao dos nomes?
-        remove(novo);
-    }*/
+    
     for(int i=0;i<100;i++){
         delete[] temp[i];
     }

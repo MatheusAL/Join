@@ -103,6 +103,17 @@ void mergeonly(dados *p, int m,int *L,int sizelista){
     else
         return 0;
 }*/
+void salva2(char ***vetorcompara,int linha,int coluna,ofstream &saida){
+    for(int cont=0;cont<coluna;cont++){
+            if(cont==coluna-1){
+                saida<<vetorcompara[linha][cont];
+            }
+            else{
+                saida<<vetorcompara[linha][cont]<<'\t';
+            }
+    }
+    saida<<'\n';
+}
 void encontramenor(ifstream *arquivo,char ***vetorcompara,int qtdfiles,int *L){ //começo da funçao para encontrar o menor
     int x,l=0,cont=0;
         x=strcmp(vetorcompara[cont][L[l]],vetorcompara[cont+1][L[l]]); 

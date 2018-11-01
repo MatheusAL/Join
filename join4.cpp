@@ -87,7 +87,7 @@ void salva2(char ***vetorcompara,int linha,int coluna,ofstream &saida){
     saida<<'\n';
 }
 int encontramenor(ifstream *arquivo,char ***vetorcompara,int qtdfiles,int *L){ //começo da funçao para encontrar o menor
-    int x,l=0,cont=0,menor=0;
+    int x,l=0,menor=0;
     for(int cont=1;cont<qtdfiles;cont++){
         x=strcmp(vetorcompara[menor][L[l]],vetorcompara[cont][L[l]]);
         if(x==0){
@@ -153,22 +153,36 @@ void mergeex(char *nome,int qtdfiles,int m,int *L,int sizelista,char **temp,int 
     }
     ofstream saida;
     saida.open("ordenado.txt");
-    while(true){
+    int x=0;
+    while(x!=qtdfiles){
         int carregou,linha;
+        for(int cont=0;cont<qtdfiles;cont++){
+            for(int cont2=0;cont2<coluna;cont2++){
+                cout<<vetorcompara[cont][cont2]<<'\t';
+            }
+            cout<<"\n^V\n";
+        }
         linha=encontramenor(arquivo,vetorcompara,qtdfiles,L);
         salva2(vetorcompara,linha,coluna,saida);
-         for(int cont2=0;cont2<coluna;cont2++){
+        //deletando o tamanho de cada string da linha que foi inserida
+        /* for(int cont2=0;cont2<coluna;cont2++){
             delete [] vetorcompara[linha][cont2];
-        }
+        }*/
+        ////////////////////
         carregou=carregaDados(arquivo,linha,vetorcompara,coluna);
+        if(carregou==0){
+            cout<<"CHEGOU AOFIM DO ARQUIVO AQUI PORRA, NO ARQUIVO "<<linha<<endl;
+            x++;
+        }
+        //break;
     }
     saida.close();
 
     //liberando a memoria dos arquivos, colunas e itens
     for(int cont=0;cont<qtdfiles;cont++){
-        for(int cont2=0;cont2<coluna;cont2++){
+        /*for(int cont2=0;cont2<coluna;cont2++){
             delete [] vetorcompara[cont][cont2];
-        }
+        }*/
         delete []vetorcompara[cont];
     }
     delete []arquivo;

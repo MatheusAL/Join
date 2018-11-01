@@ -5,11 +5,6 @@
 #include <stdlib.h>
 using namespace std;
 
-/*struct arquivo{
-    ifstream f;
-    int posicao,tammax;
-    char ***buffer;
-};*/
 
 struct dados{
     char **matriz;
@@ -80,29 +75,6 @@ void mergeonly(dados *p, int m,int *L,int sizelista){
     delete[]aux;
 }
 
-/*int procuramenor(arquivos *arquivo, int qtdfiles,int m,int*menor){
-    int i,idx=-1,x;
-    for(int cont=0;cont<qtdfiles;cont++){
-        if(arq[cont].pos<arq[cont].tammax){
-            if(idx=-1)
-                idx=i;
-            else{
-                x=strcmp(arq[cont].buffer[arq[i].pos],arq[idx].buffer[arq[idx].pos])
-                if(x==0)
-                    idx=i;
-            }
-        }
-    }
-    if(idx !=-1){
-        *menor=arq[idx].buffer[arq[idx].pos];
-        arq[idx].pos++;
-        if(arq[idx].pos==arq[idx].tammax)
-            preencheBuffer(&arq[idx],m);
-        return 1;
-    }
-    else
-        return 0;
-}*/
 void salva2(char ***vetorcompara,int linha,int coluna,ofstream &saida){
     for(int cont=0;cont<coluna;cont++){
             if(cont==coluna-1){
@@ -114,30 +86,58 @@ void salva2(char ***vetorcompara,int linha,int coluna,ofstream &saida){
     }
     saida<<'\n';
 }
-void encontramenor(ifstream *arquivo,char ***vetorcompara,int qtdfiles,int *L){ //começo da funçao para encontrar o menor
-    int x,l=0,cont=0;
-        x=strcmp(vetorcompara[cont][L[l]],vetorcompara[cont+1][L[l]]); 
+int encontramenor(ifstream *arquivo,char ***vetorcompara,int qtdfiles,int *L){ //começo da funçao para encontrar o menor
+    int x,l=0,cont=0,menor=0;
+    for(int cont=1;cont<qtdfiles;cont++){
+        x=strcmp(vetorcompara[menor][L[l]],vetorcompara[cont][L[l]]);
+        if(x==0){
+            while(true){
+                if(x<0){
+                    break;
+                }
+                if(x>0){
+                    menor++;
+                    break;
+                }
+                l++;
+                x=strcmp(vetorcompara[menor][L[l]],vetorcompara[cont+1][L[l]]);
+            }
+        }
+        else{
+            l=0;
+            if(x>0){
+                menor++;
+            } 
+        }
+    }
+    return menor;
 }
 
 
-void carregaDados(ifstream *arquivo,int linha,char ***vetorcompara,int coluna){
+int carregaDados(ifstream *arquivo,int linha,char ***vetorcompara,int coluna){
     int j=0;
     char *auxiliar=new char[1000000];
     char *s;
-    int size=0;
-    arquivo[linha].getline(auxiliar,10000,'\n');
-    s=strtok(auxiliar,"\t");
-    while(s){
-        size=strlen(s);
-        vetorcompara[linha][j]=new char[size+1];
-        strcpy((vetorcompara[linha][j]),s);
-        j++;
-        s=strtok(NULL,"\t");
-        if(j==coluna){
-            break;   
+    if(!arquivo[linha].eof()){ //se ainda nao chegou no fim do arquivo carrega uma linha
+        int size=0;
+        arquivo[linha].getline(auxiliar,10000,'\n');
+        s=strtok(auxiliar,"\t");
+        while(s){
+            size=strlen(s);
+            vetorcompara[linha][j]=new char[size+1];
+            strcpy((vetorcompara[linha][j]),s);
+            j++;
+            s=strtok(NULL,"\t");
+            if(j==coluna){
+                break;   
+            }
         }
+        delete [] auxiliar;
+        return 1;
+    }else{
+        delete [] auxiliar;
+        return 0;   //representando que nao leu
     }
-    delete [] auxiliar;
 }
 void mergeex(char *nome,int qtdfiles,int m,int *L,int sizelista,char **temp,int coluna){
     //criaçao do vetor que sera usado para encontrar o menor
@@ -151,17 +151,18 @@ void mergeex(char *nome,int qtdfiles,int m,int *L,int sizelista,char **temp,int 
         arquivo[cont].open(temp[cont]);
         carregaDados(arquivo,cont,vetorcompara,coluna); //preenche uma linha do vetor
     }
-    //escreve o conteudo atual do vetor (teste apenas)
-    for(int cont=0;cont<qtdfiles;cont++){
-        cout<<"arquivo: "<<cont<<endl;
-        for(int cont2=0;cont2<coluna;cont2++){
-            cout<<vetorcompara[cont][cont2]<<'\t';
+    ofstream saida;
+    saida.open("ordenado.txt");
+    while(true){
+        int carregou,linha;
+        linha=encontramenor(arquivo,vetorcompara,qtdfiles,L);
+        salva2(vetorcompara,linha,coluna,saida);
+         for(int cont2=0;cont2<coluna;cont2++){
+            delete [] vetorcompara[linha][cont2];
         }
-        cout<<'\n';
+        carregou=carregaDados(arquivo,linha,vetorcompara,coluna);
     }
-    /////////
-    
-    //encontramenor() aqui é chamada a funçao de encontrar o menor valor 
+    saida.close();
 
     //liberando a memoria dos arquivos, colunas e itens
     for(int cont=0;cont<qtdfiles;cont++){
